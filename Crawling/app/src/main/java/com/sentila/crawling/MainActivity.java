@@ -1,15 +1,15 @@
 package com.sentila.crawling;
 
 import android.app.ProgressDialog;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.example.myapplication.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +17,10 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    static double longitude;
+    static double latitude;
+    static double altitude;
 
     Button btnShowCoord;
     EditText edtAddress;
@@ -31,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         edtAddress = (EditText)findViewById(R.id.edtAddress);
         txtCoord = (TextView)findViewById(R.id.txtCoordinates);
 
+        // 위치 구하기
+        // double result = calDistance(latitude, longitude, lat2, ln2);
 
         btnShowCoord.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,4 +93,56 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private Button button1;
+    private TextView txtResult;
+
+    final LocationListener gpsLocationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+
+            String provider = location.getProvider();
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+            altitude = location.getAltitude();
+
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+    };
+
+    public static double calDistance(double lat1, double lon1, double lat2, double lon2) {
+
+        double theta, dist;
+        theta = lon1 - lon2;
+
+        dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;
+        dist = dist * 1000.0;
+
+        return dist;
+
+    }
+
+    private static double deg2rad(double deg) {
+
+        return (double)(deg * Math.PI / (double)180);
+
+    }
+
+    private static double rad2deg(double rad) {
+
+        return (double)(rad * (double)180 / Math.PI);
+
+    }
+
 }
